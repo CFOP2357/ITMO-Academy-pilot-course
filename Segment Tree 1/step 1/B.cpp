@@ -11,7 +11,7 @@ template<typename T> struct ST{
 
     T none;
 
-    ST(int l, int r, vector<T> &arr): l(l), r(r), none(0){
+    ST(int l, int r, vector<T> &arr): l(l), r(r), none(INT_MAX){
         if(l >= arr.size())
             acum = none;
         else if(l==r)
@@ -20,7 +20,7 @@ template<typename T> struct ST{
             int m = (l+r)/2;
             left = new ST(l, m, arr);
             right = new ST(m+1, r, arr);
-            acum = left->acum + right->acum;
+            acum = min(left->acum,  right->acum);
         }
     }
 
@@ -32,7 +32,7 @@ template<typename T> struct ST{
         if(this->l >= l && this->r <= r)
             return acum;
         int m = (l+r)/2;
-        return left->get(l, r) + right->get(l, r);
+        return min(left->get(l, r), right->get(l, r));
     }
 
     T update(int i, int v){
@@ -42,7 +42,7 @@ template<typename T> struct ST{
         if(i>=l && i<=r){
             if(l==r)
                 return acum = v;
-            acum = left->update(i, v) + right->update(i, v);
+            acum = min(left->update(i, v), right->update(i, v));
         }
         return acum;
     }
