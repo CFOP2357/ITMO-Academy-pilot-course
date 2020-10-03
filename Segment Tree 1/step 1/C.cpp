@@ -12,10 +12,18 @@ template<typename T> struct ST{
     T none;
 
     T operation(T a, T b){
-        return min(a, b);
+
+        if(a.first<b.first)
+            return a;
+
+        if(a.first>b.first)
+            return b;
+
+        return {a.first, b.second+a.second};
+
     }
 
-    ST(int l, int r, vector<T> &arr): l(l), r(r), none(INT_MAX){
+    ST(int l, int r, vector<T> &arr): l(l), r(r), none({INT_MAX, 0}){
         if(l >= arr.size())
             acum = none;
         else if(l==r)
@@ -38,7 +46,7 @@ template<typename T> struct ST{
         return operation(left->get(l, r), right->get(l, r));
     }
 
-    T update(int i, int v){
+    T update(int i, T v){
         if(i > r || i < l)
             return acum;
 
@@ -56,14 +64,14 @@ int main(){
     ios_base::sync_with_stdio(0); cin.tie(0);
 
     int n, m; cin>>n>>m;
-    vector<ull> a;
+    vector<pair<int, int>> a;
 
     for(int i = 0; i<n; i++){
         ull z; cin>>z;
-        a.push_back(z);
+        a.push_back({z, 1});
     }
 
-    ST<ull> st(0, a.size()-1, a);
+    ST<pair<int, int>> st(0, a.size()-1, a);
 
     //cout<<"#\n";
     //cout<<st.get(0, 2)<<"\n";
@@ -72,11 +80,12 @@ int main(){
         int q; cin>>q;
         if(q==1){ //update
             int i, v; cin>>i>>v;
-            st.update(i, v);
+            st.update(i, {v, 1});
         }
         else {
             int l, r; cin>>l>>r;
-            cout<<st.get(l, r-1)<<"\n";
+            auto ans = st.get(l, r-1);
+            cout<<ans.first<<" "<<ans.second<<"\n";
         }
     }
 
