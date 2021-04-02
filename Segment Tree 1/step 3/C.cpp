@@ -1,85 +1,49 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template<typename T> struct ST{
-    int l, r;
-    T acum;
-
-    ST *left, *right;
-
-    T none = 0;
-
-    T operation(T a, T b){
-        return  a+b;
-    }
-
-    ST(int l, int r, vector<T> &arr): l(l), r(r){
-        if(l >= arr.size())
-            acum = none;
-        else if(l==r)
-            acum = arr[r];
-        else {
-            int m = (l+r)/2;
-            left = new ST(l, m, arr);
-            right = new ST(m+1, r, arr);
-            acum = operation(left->acum,  right->acum);
-        }
-    }
-
-    T get(int l, int r){
-        if(this->l > r || this->r < l)
-            return none;
-        //cout<<this->l<<" "<<this->r<<" "<<this->acum<<"\n";
-        if(this->l >= l && this->r <= r)
-            return acum;
-        int m = (l+r)/2;
-        return operation(left->get(l, r), right->get(l, r));
-    }
-
-    T update(int i, T v){
-        if(i > r || i < l)
-            return acum;
-
-        if(i>=l && i<=r){
-            if(l==r)
-                return acum = v;
-            acum = operation(left->update(i, v), right->update(i, v));
-        }
-        return acum;
-    }
-
-    int find(int x){
-        if(l == r)
-            return l;
-        if(right->acum >= x)
-            return right->find(x);
-        return left->find(x - right->acum);
-    }
-
+struct Tree {
+	typedef int T;
+	static constexpr T unit =  0;
+	T f(T a, T b) { return a+b; } // (any associative fn)
+	vector<T> s; int n;
+	Tree(int n = 0, T def = unit) : s(2*n, def), n(n) {}
+	void update(int pos, T val) {
+		for (s[pos += n] = val; pos /= 2;)
+			s[pos] = f(s[pos * 2], s[pos * 2 + 1]);
+	}
+	T query(int b, int e) { // query [b, e)
+		T ra = unit, rb = unit;
+		for (b += n, e += n; b < e; b /= 2, e /= 2) {
+			if (b % 2) ra = f(ra, s[b++]);
+			if (e % 2) rb = f(s[--e], rb);
+		}
+		return f(ra, rb);
+	}
 };
 
 int main(){
     int n; cin>>n;
-    vector<int> a(n);
-    for(int i=0; i<n; i++)
-        cin>>a[i];
 
-    reverse(a.begin(), a.end());
+    Tree st(2*n);
+    map<int, int> lastPosition;
 
-    vector<int> ans;
+    vector<int> ans(n);
 
-    vector<int> initST(n, 1);
-    ST<int> st(0, n-1, initST);
+    for(int i=0; i<2*n; i++){
+        int x; cin>>x;
 
-    for(int k : a){
-        ans.push_back(st.find(k+1));
-        st.update(ans.back(), 0);
+        if(lastPosition.find(x)==lastPosition.end()){ //left
+            lastPosition[x]=i;
+        }
+        else { //right
+            ans[x-1] = st.query(lastPosition[x], i+1);
+            st.update(lastPosition[x], 1);
+        }
+
     }
 
-    reverse(ans.begin(), ans.end());
-
-    for(int k : ans)
-        cout<<k+1<<" ";
+    for(int a : ans)
+        cout<<a<<" ";
     cout<<"\n";
 
     return 0;
