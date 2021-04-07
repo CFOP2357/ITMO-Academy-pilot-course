@@ -52,8 +52,8 @@ int main(){
             int i, z; cin>>i>>z; i--;
 
             if(i%2){
-            oddPositive.update(i, z);
-            evenPositive.update(i, -z);
+                oddPositive.update(i, z);
+                evenPositive.update(i, -z);
             }
             else {
                 oddPositive.update(i, -z);
