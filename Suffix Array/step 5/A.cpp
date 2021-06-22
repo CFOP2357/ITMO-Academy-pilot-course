@@ -37,17 +37,15 @@ struct SuffixArray {
 };
 
 int main(){
-
     string s; cin>>s;
-    SuffixArray sa(s);
+    SuffixArray suffix_array(s);
 
-    for(int p : sa.sa)
-        cout<<p<<" ";
-    cout<<"\n";
-    for(int i=1; i<sa.lcp.size(); i++)
-        cout<<sa.lcp[i]<<" ";
-    cout<<"\n";
+    ull n = s.size();
+    ull ans = 0;
 
-    return 0;
+    for(int i=1; i<=n; i++){
+        ans += (n-suffix_array.sa[i]) - suffix_array.lcp[i];
+    }
+
+    cout<<ans<<"\n";
 }
-
