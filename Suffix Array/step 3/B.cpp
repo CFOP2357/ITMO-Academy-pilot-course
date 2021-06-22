@@ -32,6 +32,8 @@ struct SuffixArray {
 			for (k && k--, j = sa[rank[i] - 1];
 					s[i + k] == s[j + k]; k++);
 	}
+
+
 };
 
 bool is_as_substr(vector<ll> &sa, string &s, string &to_compare, int l, int r){ //[l, r)
@@ -47,6 +49,33 @@ bool is_as_substr(vector<ll> &sa, string &s, string &to_compare, int l, int r){ 
         return is_as_substr(sa, s, to_compare, l, m);
 }
 
+int SuffixArray_lower_bound(vector<ll> &sa, string &s, string &to_compare, int l, int r){ //[l, r)
+    if(l+1>=r)
+        return l+1;
+
+    int m = (l+r)/2;
+    string middle_string = s.substr(sa[m], to_compare.size());
+
+    if(middle_string < to_compare)
+        return SuffixArray_lower_bound(sa, s, to_compare, m, r);
+    else
+        return SuffixArray_lower_bound(sa, s, to_compare, l, m);
+}
+
+int SuffixArray_upper_bound(vector<ll> &sa, string &s, string &to_compare, int l, int r){ //[l, r)
+    if(l+1>=r)
+        return l+1;
+
+    int m = (l+r)/2;
+    string middle_string = s.substr(sa[m], to_compare.size());
+
+    if(middle_string <= to_compare)
+        return SuffixArray_upper_bound(sa, s, to_compare, m, r);
+    else
+        return SuffixArray_upper_bound(sa, s, to_compare, l, m);
+}
+
+
 int main(){
     ios_base::sync_with_stdio(0); cin.tie(0);
 
@@ -54,13 +83,12 @@ int main(){
 
     SuffixArray sa(t);
 
+
     int n; cin>>n;
     while(n--){
         string s; cin>>s;
-        if(is_as_substr(sa.sa, t, s, 0, sa.sa.size()))
-            cout<<"Yes\n";
-        else
-            cout<<"No\n";
+        cout<<SuffixArray_upper_bound(sa.sa,t,s,0,sa.sa.size()) - SuffixArray_lower_bound(sa.sa,t,s,0,sa.sa.size())<<"\n";
     }
     return 0;
 }
+

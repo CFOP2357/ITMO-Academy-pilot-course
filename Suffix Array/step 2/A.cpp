@@ -32,17 +32,17 @@ struct SuffixArray {
 			for (k && k--, j = sa[rank[i] - 1];
 					s[i + k] == s[j + k]; k++);
 	}
+
+
 };
 
 int main(){
 
     string s; cin>>s;
-    s += '$';
-
     SuffixArray sa(s);
 
-    for(int i=1; i<sa.sa.size(); i++)
-        cout<<sa.sa[i]<<" ";
+    for(int p : sa.sa)
+        cout<<p<<" ";
     cout<<"\n";
 
     return 0;
