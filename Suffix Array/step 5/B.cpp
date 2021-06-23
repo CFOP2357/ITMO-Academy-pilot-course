@@ -36,7 +36,7 @@ struct SuffixArray {
 
 };
 
-string lcs(string &s, string &t){
+string lcs(string &s, string &t){ //O(nlogn) where n = s.size()+t.size()
     string both = s+"#"+t;
     int n = both.size();
     SuffixArray suffix_array(both);
