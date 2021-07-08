@@ -32,12 +32,12 @@ template<typename T> struct ST {
 
     /////////////change this
 	T empty_add = 0; //valor unitario, no agrega nada con add
+	T not_ = LLONG_MAX-1; //valor vacio, no cambia nada con query
 	T add_operation(const T &a, const T &b){
         return a+b;
     }
-    T not_ = 0; //valor vacio, no cambia nada con query
     T query_operation(const T &a, const T &b){
-        return a+b;
+        return min(a, b);
     }
     /////////////
 
@@ -61,7 +61,7 @@ template<typename T> struct ST {
 	}
 	void set(int L, int R, T x) { //[L,R)
 		if (R <= lo || hi <= L) return;
-		if (L <= lo && hi <= R) mset = x, val = (hi-lo)*x, madd = empty_add;
+		if (L <= lo && hi <= R) mset = val = x, madd = empty_add;
 		else {
 			push(), l->set(L, R, x), r->set(L, R, x);
 			val = query_operation(l->val, r->val);
@@ -72,7 +72,7 @@ template<typename T> struct ST {
 		if (L <= lo && hi <= R) {
 			if (mset != inf) mset = add_operation(mset, x);
 			else madd = add_operation(madd, x);
-			val = add_operation(val, x);
+			val += x*(hi-lo);
 		}
 		else {
 			push(), l->add(L, R, x), r->add(L, R, x);
@@ -112,5 +112,7 @@ int main(){
     }
     return 0;
 }
+
+
 
 
